@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jira comment</title>
+    <style>
+        #hide-block{
+            display: none;
+        }
+        form.block{
+            border: 1px solid #d4d4d4;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        form.block.hide{
+            opacity: 0.4;
+        }
+        .form-group{
+            margin-bottom: 10px;
+        }
+        .form-group .title{
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group .double-input{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .form-group .double-input label{
+            margin-right: 15px;
+        }
+        .plus, .minus{
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            margin: 5px;
+        }
+        .wrapper-param{
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .wrapper-param label{
+            margin-right: 5px;
+        }
+        .addForm, .createComment{
+            width: 45%;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .createComment{
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div id="hide-block">
+    <div class="form-group">
+        <p class="title">Тип</p>
+        <label>
+            GET <input type="radio" name="type" value="GET">
+        </label>
+        <label>
+            POST <input type="radio" name="type" value="POST">
+        </label>
+    </div>
+    <div class="form-group">
+        <div class="double-input">
+            <label><span class="title">Название:</span><br /><input type="text" name="name"></label>
+            <label><span class="title">URL:</span><br /><input type="text" name="url"></label>
+        </div>
+    </div>
+    <div class="form-group">
+        <p class="title">Body<span class="plus body-param" onclick="addParam(this, 'body')">+</span></p>
+        <div class="body-params params"></div>
+        <textarea name="body" rows="10" cols="70"></textarea>
+    </div>
+    <div class="form-group">
+        <p class="title">Response<span class="plus response-param" onclick="addParam(this, 'response')">+</span></p>
+        <div class="response-params params"></div>
+        <textarea name="response" rows="10" cols="70"></textarea>
+    </div>
+    <button onclick="hideBlock(this)" type="button">Скрыть</button>
+    <button onclick="removeBlock(this)" type="button">Удалить</button>
+</div>
+<div id="wrapper-blocks"></div>
+<button class="addForm" onclick="addForm()">Добавить +</button>
+<button class="createComment" onclick="createJiraComment()">Создать</button>
+</body>
+<script>
+    function addParam(el, type){
+        const block = document.createElement('div');
+        block.innerHTML = `
+                <label>Название:<br /><input type="text" name="${type}-param-name[]"></label>
+                <label>Описание:<br /><input type="text" name="${type}-param-description[]"></label>
+                <span class="minus" onclick="removeParam(this)">-</span>
+        `;
+        block.classList.add('wrapper-param');
+        el.parentElement.parentElement.getElementsByClassName('params')[0].append(block);
+    }
+
+    function removeParam(el){
+        el.parentElement.remove();
+    }
+
+    function hideBlock(el){
+        if(el.dataset.hide){
+            el.parentElement.classList.remove('hide');
+            el.dataset.hide = '';
+        } else {
+            el.parentElement.classList.add('hide');
+            el.dataset.hide = '1';
+        }
+    }
+
+    function removeBlock(el){
+        el.parentElement.remove();
+    }
+
+    function addForm(){
+        const form = document.createElement('form');
+        form.classList.add('block');
+        form.innerHTML = document.getElementById('hide-block').innerHTML;
+        document.getElementById('wrapperMocks').append(form);
+    }
+
+    function createJiraComment(){
+        const forms = document.getElementsByTagName('form');
+        for(const f of forms){
+            const fd = new FormData(f);
+            console.log(fd.getAll('body-param-name[]'));
+            console.log(fd.getAll('body-param-description[]'))
+        }
+    }
+
+</script>
+</html>
